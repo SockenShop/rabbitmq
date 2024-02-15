@@ -42,12 +42,11 @@ agent any
                 EKSCLUSTERNAME = credentials("EKS_CLUSTER")
 
             }
-            steps{
+            steps {
                 sh 'rm -Rf .kube'
                 sh 'mkdir .kube'
                 sh 'touch .kube/config'
                 sh 'sudo chmod 777 .kube/config'
-                //sh 'cat $KUBECONFIG > .kube/config'
                 sh 'rm -Rf .aws'
                 sh 'mkdir .aws'
                 sh 'aws configure set aws_access_key_id $AWSKEY'
@@ -56,12 +55,9 @@ agent any
                 sh 'aws configure set output text'                
                 sh 'aws eks --region $AWSREGION update-kubeconfig --name $EKSCLUSTERNAME --kubeconfig .kube/config'
                 sh 'aws eks list-clusters'
-                sh 'kubectl config view'
                 sh 'kubectl cluster-info --kubeconfig .kube/config'
-                sh 'kubectl apply -f ./manifests -n $NAMESPACE'
-                }
-            
-
+                sh 'kubectl apply -f ./manifests -n $NAMESPACE --kubeconfig .kube/config'
+            }
         }
     }
 }
